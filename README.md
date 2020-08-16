@@ -64,8 +64,19 @@ This will allow you to create any kind of "classes" / "profession" / "paths" sys
     
     - Win new skills based on levels or just experience amount.
     
-- Skills could be affected by levels in different ways, for example an attack type skill damage could be multiplied by
-the level factor.
+- Skills could be affected by levels, some of the options for this will be:
+
+    - For the attack type skills we have two options, multiply by the skill damage by the level factor (a custom
+property on the levels), or it could be calculated by getting a proportion of the damage using the skill owner and the
+target.
+    
+    - Another option for any skill type will be to include a modifier on the level to be applied on the skill. This way
+we will have the possibility to modify the skill result as we like.
+    
+    -  Last option to give even more flexibility will be to emit events or callbacks to allow apply a custom logic.
+
+- Events will be used across the package to allow other devs get into the process, for example when the level is
+increased or when a skill is executed.
 
 
 ## Documentation
