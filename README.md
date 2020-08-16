@@ -9,18 +9,80 @@ Note, though the package was originally build for the Reldens project it could b
 ## Features
 
 - Skills will always have an "owner" object which will execute the skill itself.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject
+})
+```
 
-- Skills could have none (using a direction), one or multiple targets (this would cover area skills).
+- Skills could have none (using a direction, only available in Physical skill types), one or multiple targets (this
+would cover area skills).
+```
+// using direction:
+let direction = {x: 123, y: 432};
+mySkill.execute({direction});
+// target:
+mySkill.execute({target});
+// multiple:
+let targets = {multiple: [targetObject1, targetObject2, targetObject3]};
+mySkill.execute(targets);
+```
 
 - Optional (but mostly recommended) skills could have a re-execution delay time to limit the uses over time, for
 example: max 1 execution per 5 seconds.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    skillDelay: 5000 // delay time in ms
+});
+```
 
 - Optional skills could have a uses limit.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    uses: 6
+});
+// after 6 executions
+let isValid = mySkill.validate(); // will return false.
+```
 
 - Optional set the skill range, determined by X and Y positions between owner (who executes the skill) and target.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    range: 10 // for now range can receive a single value which will be the valid interaction margin around the object.
+});
+// for example:
+// let ownerPosition = {x: 1, y: 1};
+// let targetPosition = {x: 200, y: 1}; 
+let isInRange = mySkill.isInRange(ownerPosition, targetPosition); // will return false because X is too far. 
+```
 
 - Skills could have owner attributes conditions and owner attributes effects. For example, a condition could be:
 owner.MP > 20 - and the effect could be: owner.MP - 20MP. This will be archive by using "conditions" and "modifiers".
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    range: 10,
+    conditions: [
+        {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
+        // ... include as many as you need.
+    ],
+    effects: [
+        // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
+        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
+        // ... include as many as you need.
+    ]
+});
+// if the player has MP enough then the execution will succed:
+mySkill.execute(target);
+```
 
 - Skills could have "conditions" and "rewards" callbacks to run custom actions. For example, a "Craft Weapon" could be
 created, but the conditions for the weapon materials and the successfully created weapon item will not be considered as
