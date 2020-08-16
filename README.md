@@ -24,11 +24,19 @@ owner.MP > 20 - and the effect could be: owner.MP - 20MP. This will be archive b
 
 - Skills could have "conditions" and "rewards" callbacks to run custom actions. For example, a "Craft Weapon" could be
 created, but the conditions for the weapon materials and the successfully created weapon item will not be considered as
-part of this module scope, for that these custom callbacks will be implemented on the skill class. 
+part of this module scope, for that these custom callbacks will be implemented on the skill class.
 
 - The possibility to create different skills types:
 
-    - Attack: This type will require a set of properties and have methods to calculate the damage caused to a target.
+    - Attack: This type will have an specific set of properties and methods to calculate the damage caused to a target.
+The skill will require the affected property to which the damage calculation will be applied.
+About the damage calculation (ok... I'll try to keep it as simple as possible) - the idea will be to have 6 main damage
+properties where you can find: attack and defense, aim and dodge, critical chance and multiplier.
+None of these will be required and the calculation will be using the opposite ones where the damage received will be
+less if the attack is lower than the defense, the attack could be avoided if dodge is higher than aim, and at the same
+time, I would include an option to specify if the aim/dodge will affect the damage or the critical chances as well.
+So this way we could specify all the skill owner and target properties related to each of the main properties to later
+be used in a proportional calculation using the skill hit damage.
 
     - Effect: This type implements "modifiers" to cause a direct effect on any target any properties. This will also
 accept a time duration in case you like to create a buff type skill to be automatically reverted after the timer ends.
