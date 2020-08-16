@@ -58,9 +58,15 @@ For example: you can create a "Magician Path" tree by setting a starting point o
 then the player will learn the new skills to follow the path.
 This will allow you to create any kind of "classes" / "profession" / "paths" system.
 
-- Increase player levels based on experience points.
+- We will provide with a Levels manager, so we can use it for:
 
-- Win new skills based on levels or just experience amount.
+    - Increase player levels based on experience points.
+    
+    - Win new skills based on levels or just experience amount.
+    
+- Skills could be affected by levels in different ways, for example an attack type skill damage could be multiplied by
+the level factor.
+
 
 ## Documentation
 
