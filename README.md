@@ -79,6 +79,41 @@ we will have the possibility to modify the skill result as we like.
 increased or when a skill is executed.
 
 
+---
+
+If you are using levels to just increase the owner properties, then we could use a simple proportional damage
+calculation like the following:
+
+```
+// we could include validations for the affect property on the target:
+if(target.affectedProperty > 0){
+    // these stats (atk and def), would be already affected by the level.
+    let diff = owner.atk - target.def;
+    // at this point we could use levels modifiers to change the hitDamage here.
+    let damage = this.hitDamage; // this is an int that will be the damage at 100%
+    if(diff > 0){
+        let p = diff < target.def ? (diff * 100 / target.def) : 99;
+        p = p > 99 ? 99 : p; // maximum modifier percentage to add.
+        let additionalDamage = Math.ceil((p * damage / 100));
+        damage = damage + additionalDamage;
+    }
+    if(diff < 0){
+        let p = -diff < owner.atk ? (-diff * 100 / owner.atk) : 99;
+        p = p > 99 ? 99 : p; // maximum modifier percentage to remove.
+        let reduceDamage = Math.floor((p * damage / 100));
+        damage = damage - reduceDamage;
+    }
+    target.affectedProperty -= damage;
+    // similar to sample above we could use the owner.level and target.level to get the additional or reduced damage. 
+}
+// we could avoid getting the affectedProperty below 0:
+if(target.affectedProperty < 0){
+    target.affectedProperty = 0;
+}
+```
+
+---
+
 ## Documentation
 
 [https://www.reldens.com/documentation/skills](https://www.reldens.com/documentation/skills)
