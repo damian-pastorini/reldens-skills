@@ -88,6 +88,23 @@ mySkill.execute(target);
 created, but the conditions for the weapon materials and the successfully created weapon item will not be considered as
 part of this module scope, for that these custom callbacks will be implemented on the skill class.
 
+```
+class MySkill extends Skill
+{
+    // ....
+    onExecuteConditions()
+    {
+        // implement your custom conditions here.
+        return true;
+    }
+
+    async onExecuteRewards()
+    {
+        // implement your custom rewards here.
+    }
+}
+```
+
 - The possibility to create different skills types:
 
     - Attack: This type will have an specific set of properties and methods to calculate the damage caused to a target.
@@ -99,6 +116,40 @@ less if the attack is lower than the defense, the attack could be avoided if dod
 time, I would include an option to specify if the aim/dodge will affect the damage or the critical chances as well.
 So this way we could specify all the skill owner and target properties related to each of the main properties to later
 be used in a proportional calculation using the skill hit damage.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    range: 10,
+    affectedProperty: 'hp',
+    // these are going to be taken from the owner for damage calculation: 
+    attackProperties: ['atk', 'power', 'strength'],
+    // these are going to be taken from the target for the damage calculation:
+    defenseProperties: ['def', 'resistance', 'strength'],
+    // in the same way you could specify the aim and dodge properties:
+    aimProperties: [],
+    dodgeProperties: [],
+    // also critical chances can be specify using a multiplier or by adding a fixed value to the result damage:
+    criticalChance: 30, // int 0-100 %
+    criticalMultiplier: 1.5, // result damage will be multiplied by 1.5 if the skill is critial
+    // or just a fixed value that will be added to the result damage:
+    // criticalFixedValue: 120,
+    // critical damage result can be affected by aim and dodge properties:
+    // criticalAffected: true, // if not specified the default value is false
+    // conditions and effects on the owner for execution:
+    conditions: [
+        {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
+        // ... include as many as you need.
+    ],
+    effects: [
+        // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
+        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
+        // ... include as many as you need.
+    ]
+});
+// if the player has MP enough then the execution will succed:
+mySkill.execute(target);
+```
 
     - Effect: This type implements "modifiers" to cause a direct effect on any target any properties. This will also
 accept a time duration in case you like to create a buff type skill to be automatically reverted after the timer ends.
