@@ -71,6 +71,7 @@ let mySkill = new Skill({
     owner: yourPlayerObject,
     range: 10,
     conditions: [
+        // as modifiers, conditions will be an specific Condition class (WIP), for this example I'm using a normal one:
         {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
         // ... include as many as you need.
     ],
@@ -117,7 +118,7 @@ time, I would include an option to specify if the aim/dodge will affect the dama
 So this way we could specify all the skill owner and target properties related to each of the main properties to later
 be used in a proportional calculation using the skill hit damage.
 ```
-let mySkill = new Skill({
+let mySkill = new Attack({
     key: 'fireball',
     owner: yourPlayerObject,
     range: 10,
@@ -153,6 +154,28 @@ mySkill.execute(target);
 
     - Effect: This type implements "modifiers" to cause a direct effect on any target any properties. This will also
 accept a time duration in case you like to create a buff type skill to be automatically reverted after the timer ends.
+```
+let mySkill = new Skill({
+    key: 'healHp',
+    owner: yourPlayerObject,
+    range: 15,
+    conditions: [
+        // as modifiers, conditions will be an specific Condition class (WIP), for this example I'm using a normal one:
+        {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
+        // ... include as many as you need.
+    ],
+    effects: [
+        // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
+        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
+        // ... include as many as you need.
+    ],
+    targetEffects: [
+        new Modifier({key: 'healHp', propertyKey: 'hp', operation: ModifierConst.OPS.INC, value: 20})
+    ]
+});
+// if the player has MP enough then the execution will succed:
+mySkill.execute(target);
+```
  
     - Physical-(Attack or Effect): These two types will require specific properties and have methods to make the skill
 behave like a physical body but execute the skill only "onHit" an specific method created for this matter. For example,
