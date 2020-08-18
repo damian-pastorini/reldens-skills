@@ -35,7 +35,17 @@ example: max 1 execution per 5 seconds.
 let mySkill = new Skill({
     key: 'fireball',
     owner: yourPlayerObject,
-    skillDelay: 5000 // delay time in ms
+    skillDelay: 5000 // delay time in ms, 5s
+});
+```
+
+- Optional skills could have a castTime, if specify there's going to be a delay between the execution starts and the
+damage calculation or effects apply moment so we can cancel the skill.
+```
+let mySkill = new Skill({
+    key: 'fireball',
+    owner: yourPlayerObject,
+    castTime: 8000 // delay time in ms, 8s
 });
 ```
 
