@@ -133,10 +133,20 @@ let mySkill = new Attack({
     owner: yourPlayerObject,
     range: 10,
     affectedProperty: 'hp',
-    // these are going to be taken from the owner for damage calculation: 
-    attackProperties: ['atk', 'power', 'strength'],
+    // these are going to be taken from the owner and the target for damage calculation in the order of the array: 
+    attackProperties: [
+        // for this example, attack and power will be sum and the result multiply by the strength:
+        {key: 'atk', op: ModifierConst.OPS.INC},
+        {key: 'power', op: ModifierConst.OPS.INC},
+        {key: 'strength', op: ModifierConst.OPS.MUL}
+    ],
     // these are going to be taken from the target for the damage calculation:
-    defenseProperties: ['def', 'resistance', 'strength'],
+    defenseProperties: [
+        // for this example, def and resistance will be sum and the result multiply by the strength:
+        {key: 'def', op: ModifierConst.OPS.INC},
+        {key: 'resistance', op: ModifierConst.OPS.INC},
+        {key: 'strength', op: ModifierConst.OPS.MUL}
+    ],
     // in the same way you could specify the aim and dodge properties:
     aimProperties: [],
     dodgeProperties: [],
@@ -170,8 +180,8 @@ let mySkill = new Skill({
     owner: yourPlayerObject,
     range: 15,
     conditions: [
-        // as modifiers, conditions will be an specific Condition class (WIP), for this example I'm using a normal one:
-        {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
+        // Condition and ModifierConst.COMPARE - are already available in the modifiers package.
+        new Condition({key: 'enoughMp', propertyKey: 'mp', conditional: ModifierConst.COMPARE.GE, value: 20}),
         // ... include as many as you need.
     ],
     effects: [
