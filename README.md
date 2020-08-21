@@ -5,7 +5,7 @@
 ## About
 The idea behind this package is to provide a skills and experience systems so you can relate these to a target owner.
 Note, though it is an opined implementation it provides a lot of flexibility and it could be implemented on any project.
-The package base features can be used in both server or client side, but we additionally provide some server specifics
+The package base features can be used in both server or client side, but we additionally provide some server specific
 functions like storage models, SQL scripts for installation, sender and receiver support for communication between
 the server and the client. 
  
@@ -68,12 +68,13 @@ let isValid = mySkill.validate(); // will return false.
 let mySkill = new Skill({
     key: 'fireball',
     owner: yourPlayerObject,
-    range: 10 // for now range can receive a single value which will be the valid interaction margin around the object.
+    // range is a single value which will be the valid interaction margin around the object (4 directions).
+    range: 10
 });
 // for example:
 // let ownerPosition = {x: 1, y: 1};
 // let targetPosition = {x: 200, y: 1}; 
-let isInRange = mySkill.isInRange(ownerPosition, targetPosition); // will return false because X is too far. 
+let isInRange = mySkill.isInRange(ownerPosition, targetPosition); // will return false because X is too far.
 ```
 
 - Skills could have owner attributes conditions and owner attributes effects. For example, a condition could be:
@@ -84,7 +85,6 @@ let mySkill = new Skill({
     owner: yourPlayerObject,
     range: 10,
     conditions: [
-        // as modifiers, conditions will be an specific Condition class (WIP), for this example I'm using a normal one:
         {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
         // ... include as many as you need.
     ],
@@ -121,15 +121,19 @@ class MySkill extends Skill
 
 - The possibility to create different skills types:
 
-    - Attack: This type will have an specific set of properties and methods to calculate the damage caused to a target.
+Attack: This type will have an specific set of properties and methods to calculate the damage caused to a target.
 The skill will require the affected property to which the damage calculation will be applied.
-About the damage calculation (ok... I'll try to keep it as simple as possible) - the idea will be to have 6 main damage
-properties where you can find: attack and defense, aim and dodge, critical chance and multiplier.
+About the damage calculation (ok... I'll try to keep it as simple as possible) - the idea will be to have 5 main damage
+properties where you can find: attack / defense, aim / dodge and critical chance.
 None of these will be required and the calculation will be using the opposite ones where the damage received will be
-less if the attack is lower than the defense, the attack could be avoided if dodge is higher than aim, and at the same
-time, I would include an option to specify if the aim/dodge will affect the damage or the critical chances as well.
-So this way we could specify all the skill owner and target properties related to each of the main properties to later
-be used in a proportional calculation using the skill hit damage.
+less if the attack is lower than the defense, the attack could be avoided if dodge is higher than aim.
+At the same time, there are options to specify if the aim/dodge will affect the damage or the critical chances, also if
+dodgeFullEnabled is enabled then the attack could be fully avoided but for that matter you would also need to specify
+the dodgeOverAimSuccess which is the dodge multiplier for the calc: targetDodge > (ownerAim * this.dodgeOverAimSuccess).
+This allows you to specify all the skill owner and target properties related to each of the main properties to later be
+used in a proportional calculation using the skill hit damage.
+If you don't want to use the implemented damage calculation using these properties you can set the applyDirectDamage
+property = true and the hitDamage will be fixed.
 ```
 let mySkill = new Attack({
     key: 'fireball',
@@ -162,27 +166,6 @@ let mySkill = new Attack({
     // criticalAffected: true, // if not specified the default value is false
     // conditions and effects on the owner for execution:
     conditions: [
-        {key: 'enoughMp', propertyKey: 'mp', condition: '>=', value: 20}
-        // ... include as many as you need.
-    ],
-    effects: [
-        // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
-        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
-        // ... include as many as you need.
-    ]
-});
-// if the player has MP enough then the execution will succed:
-mySkill.execute(target);
-```
-
-    - Effect: This type implements "modifiers" to cause a direct effect on any target any properties. This will also
-accept a time duration in case you like to create a buff type skill to be automatically reverted after the timer ends.
-```
-let mySkill = new Skill({
-    key: 'healHp',
-    owner: yourPlayerObject,
-    range: 15,
-    conditions: [
         // Condition and ModifierConst.COMPARE - are already available in the modifiers package.
         new Condition({key: 'enoughMp', propertyKey: 'mp', conditional: ModifierConst.COMPARE.GE, value: 20}),
         // ... include as many as you need.
@@ -191,6 +174,24 @@ let mySkill = new Skill({
         // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
         new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
         // ... include as many as you need.
+    ]
+});
+// if the player has MP enough then the execution will succed:
+mySkill.execute(target);
+```
+
+Effect: This type implements "modifiers" to cause a direct effect on any target any properties. This will also
+accept a time duration in case you like to create a buff type skill to be automatically reverted after the timer ends.
+```
+let mySkill = new Skill({
+    key: 'healHp',
+    owner: yourPlayerObject,
+    range: 15,
+    conditions: [
+        new Condition({key: 'enoughMp', propertyKey: 'mp', conditional: ModifierConst.COMPARE.GE, value: 20}),
+    ],
+    effects: [
+        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
     ],
     targetEffects: [
         new Modifier({key: 'healHp', propertyKey: 'hp', operation: ModifierConst.OPS.INC, value: 20})
@@ -199,14 +200,14 @@ let mySkill = new Skill({
 // if the player has MP enough then the execution will succed:
 mySkill.execute(target);
 ```
- 
-    - Physical-(Attack or Effect): These two types will require specific properties and have methods to make the skill
+
+Physical-(Attack or Effect): These two types will require specific properties and have methods to make the skill
 behave like a physical body but execute the skill only "onHit" an specific method created for this matter. For example,
 let's say your player can spell a fireball in a direct line to the target, but if the target moves the fireball could
 be dodged and the skill won't have any effect. For this case the attack or effect will be calculated if the physical
 body hit the target (a callback method onHit will need to be used for this matter).
 
-    - As you can see these are the 4 most basic skill types but over time we will include more types and probably more
+As you can see these are the 4 most basic skill types but over time we will include more types and probably more
 properties on the current ones to generate new different behaviors. For example, skills for continues damage over time:
 let's say a fireball can burn player making it take minor damage over X time.
 
@@ -239,37 +240,6 @@ increased or when a skill is executed.
 
 
 ---
-
-If you are using levels to just increase the owner properties, then we could use a simple proportional damage
-calculation like the following:
-
-```
-// we could include validations for the affect property on the target:
-if(target.affectedProperty > 0){
-    // these stats (atk and def), would be already affected by the level.
-    let diff = owner.atk - target.def;
-    // at this point we could use levels modifiers to change the hitDamage here.
-    let damage = this.hitDamage; // this is an int that will be the damage at 100%
-    if(diff > 0){
-        let p = diff < target.def ? (diff * 100 / target.def) : 99;
-        p = p > 99 ? 99 : p; // maximum modifier percentage to add.
-        let additionalDamage = Math.ceil((p * damage / 100));
-        damage = damage + additionalDamage;
-    }
-    if(diff < 0){
-        let p = -diff < owner.atk ? (-diff * 100 / owner.atk) : 99;
-        p = p > 99 ? 99 : p; // maximum modifier percentage to remove.
-        let reduceDamage = Math.floor((p * damage / 100));
-        damage = damage - reduceDamage;
-    }
-    target.affectedProperty -= damage;
-    // similar to sample above we could use the owner.level and target.level to get the additional or reduced damage. 
-}
-// we could avoid getting the affectedProperty below 0:
-if(target.affectedProperty < 0){
-    target.affectedProperty = 0;
-}
-```
 
 Need something specific?
 
