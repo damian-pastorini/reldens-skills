@@ -168,12 +168,22 @@ let mySkill = new Attack({
     // conditions and effects on the owner for execution:
     conditions: [
         // Condition and ModifierConst.COMPARE - are already available in the modifiers package.
-        new Condition({key: 'enoughMp', propertyKey: 'mp', conditional: ModifierConst.COMPARE.GE, value: 20}),
+        new Condition({
+            key: 'enoughMp',
+            propertyKey: 'mp',
+            conditional: ModifierConst.COMPARE.GE,
+            value: 20
+        }),
         // ... include as many as you need.
     ],
     effects: [
         // ModifierConst.OPS.DEC = 2 - this is already available in the modifiers package.
-        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
+        new Modifier({
+            key: 'lowMp',
+            propertyKey: 'mp',
+            operation: ModifierConst.OPS.DEC,
+            value: 20
+        })
         // ... include as many as you need.
     ]
 });
@@ -189,13 +199,28 @@ let mySkill = new Skill({
     owner: yourPlayerObject,
     range: 15,
     conditions: [
-        new Condition({key: 'enoughMp', propertyKey: 'mp', conditional: ModifierConst.COMPARE.GE, value: 20}),
+        new Condition({
+            key: 'enoughMp',
+            propertyKey: 'mp',
+            conditional: ModifierConst.COMPARE.GE,
+            value: 20
+        }),
     ],
     effects: [
-        new Modifier({key: 'lowMp', propertyKey: 'mp', operation: ModifierConst.OPS.DEC, value: 20})
+        new Modifier({
+            key: 'lowMp',
+            propertyKey: 'mp',
+            operation: ModifierConst.OPS.DEC,
+            value: 20
+        })
     ],
     targetEffects: [
-        new Modifier({key: 'healHp', propertyKey: 'hp', operation: ModifierConst.OPS.INC, value: 20})
+        new Modifier({
+            key: 'healHp',
+            propertyKey: 'hp',
+            operation: ModifierConst.OPS.INC,
+            value: 20
+        })
     ]
 });
 // if the player has MP enough then the execution will succed:
