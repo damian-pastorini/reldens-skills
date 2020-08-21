@@ -74,7 +74,8 @@ let mySkill = new Skill({
 // for example:
 // let ownerPosition = {x: 1, y: 1};
 // let targetPosition = {x: 200, y: 1}; 
-let isInRange = mySkill.isInRange(ownerPosition, targetPosition); // will return false because X is too far.
+// the following example will return false because X is too far:
+let isInRange = mySkill.isInRange(ownerPosition, targetPosition);
 ```
 
 - Skills could have owner attributes conditions and owner attributes effects. For example, a condition could be:
@@ -140,7 +141,7 @@ let mySkill = new Attack({
     owner: yourPlayerObject,
     range: 10,
     affectedProperty: 'hp',
-    // these are going to be taken from the owner and the target for damage calculation in the order of the array: 
+    // these are going to be taken from the owner for damage calculation in the order of the array: 
     attackProperties: [
         // for this example, attack and power will be sum and the result multiply by the strength:
         {key: 'atk', op: ModifierConst.OPS.INC},
@@ -157,7 +158,7 @@ let mySkill = new Attack({
     // in the same way you could specify the aim and dodge properties:
     aimProperties: [],
     dodgeProperties: [],
-    // also critical chances can be specify using a multiplier or by adding a fixed value to the result damage:
+    // critical chances can be specify using a multiplier or by adding a fixed value to the result damage:
     criticalChance: 30, // int 0-100 %
     criticalMultiplier: 1.5, // result damage will be multiplied by 1.5 if the skill is critial
     // or just a fixed value that will be added to the result damage:
