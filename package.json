@@ -34,7 +34,7 @@
     },
     "dependencies": {
         "@reldens/modifiers": "^0.3.2",
-        "@reldens/storage": "^0.1.8",
+        "@reldens/storage": "^0.1.9",
         "@reldens/utils": "^0.1.8"
     }
 }
