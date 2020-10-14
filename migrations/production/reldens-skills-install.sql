@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `skills_class_path_level_labels` (
   `level_key` int(11) unsigned NOT NULL,
   `label` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `class_path_id_level_key` (`class_path_id`,`level_key`),
   KEY `class_path_id` (`class_path_id`),
   KEY `level_key` (`level_key`),
   CONSTRAINT `FK__skills_class_path` FOREIGN KEY (`class_path_id`) REFERENCES `skills_class_path` (`id`) ON UPDATE CASCADE,
@@ -101,8 +102,8 @@ CREATE TABLE IF NOT EXISTS `skills_levels_modifiers` (
   `property_key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `operation` int(11) unsigned NOT NULL,
   `value` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `minValue` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `maxValue` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `minValue` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `maxValue` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `minProperty` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `maxProperty` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -136,7 +137,6 @@ CREATE TABLE IF NOT EXISTS `skills_levels_modifiers_conditions` (
 CREATE TABLE IF NOT EXISTS `skills_levels_set` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `autoFillRanges` int(1) unsigned NOT NULL DEFAULT '0',
-  `autoSortLevels` int(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
