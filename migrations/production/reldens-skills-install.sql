@@ -161,27 +161,28 @@ CREATE TABLE IF NOT EXISTS `skills_owners_class_path` (
 /*!40000 ALTER TABLE `skills_owners_class_path` ENABLE KEYS */;
 
 -- Dumping structure for table reldens_test_skills.skills_skill
-CREATE TABLE IF NOT EXISTS `skills_skill` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'B: 1, ATK: 2, EFCT: 3, PHYS-ATK: 4, PHYS-EFCT: 5',
-  `autoValidation` int(1) NOT NULL,
-  `skillDelay` int(11) NOT NULL,
-  `castTime` int(11) NOT NULL,
-  `usesLimit` int(11) NOT NULL DEFAULT '0',
-  `range` int(11) NOT NULL,
-  `rangeAutomaticValidation` int(1) NOT NULL,
-  `rangePropertyX` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Property path',
-  `rangePropertyY` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Property path',
-  `rangeTargetPropertyX` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Target property path',
-  `rangeTargetPropertyY` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Target property path',
-  `allowSelfTarget` int(1) NOT NULL,
-  `criticalChance` int(11) DEFAULT NULL,
-  `criticalMultiplier` int(11) DEFAULT NULL,
-  `criticalFixedValue` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
+CREATE TABLE `skills_skill` (
+	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`key` VARCHAR(255) NOT NULL COLLATE 'utf8_unicode_ci',
+	`type` VARCHAR(255) NOT NULL COMMENT 'B: 1, ATK: 2, EFCT: 3, PHYS-ATK: 4, PHYS-EFCT: 5' COLLATE 'utf8_unicode_ci',
+	`autoValidation` INT(1) NOT NULL,
+	`skillDelay` INT(11) NOT NULL,
+	`castTime` INT(11) NOT NULL,
+	`usesLimit` INT(11) NOT NULL DEFAULT '0',
+	`range` INT(11) NOT NULL,
+	`rangeAutomaticValidation` INT(1) NOT NULL,
+	`rangePropertyX` VARCHAR(255) NOT NULL COMMENT 'Property path' COLLATE 'utf8_unicode_ci',
+	`rangePropertyY` VARCHAR(255) NOT NULL COMMENT 'Property path' COLLATE 'utf8_unicode_ci',
+	`rangeTargetPropertyX` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Target property path' COLLATE 'utf8_unicode_ci',
+	`rangeTargetPropertyY` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Target property path' COLLATE 'utf8_unicode_ci',
+	`allowSelfTarget` INT(1) NOT NULL,
+	`criticalChance` INT(11) NULL DEFAULT NULL,
+	`criticalMultiplier` INT(11) NULL DEFAULT NULL,
+	`criticalFixedValue` INT(11) NULL DEFAULT NULL,
+	`customData` TEXT NULL DEFAULT NULL COMMENT 'Any custom data, recommended JSON format.' COLLATE 'utf8_unicode_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `key` (`key`) USING BTREE
+) COLLATE='utf8_unicode_ci' ENGINE=InnoDB;
 -- Dumping data for table reldens_test_skills.skills_skill: ~0 rows (approximately)
 /*!40000 ALTER TABLE `skills_skill` DISABLE KEYS */;
 /*!40000 ALTER TABLE `skills_skill` ENABLE KEYS */;
