@@ -1,7 +1,7 @@
 {
     "name": "@reldens/skills",
     "scope": "@reldens",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "Reldens - Skills",
     "author": "Damian A. Pastorini",
     "license": "MIT",
@@ -33,8 +33,8 @@
         "url": "https://github.com/damian-pastorini/reldens-skills/issues"
     },
     "dependencies": {
-        "@reldens/modifiers": "^0.4.6",
-        "@reldens/storage": "^0.4.0",
+        "@reldens/modifiers": "^0.4.7",
+        "@reldens/storage": "^0.4.1",
         "@reldens/utils": "^0.4.3"
     }
 }
