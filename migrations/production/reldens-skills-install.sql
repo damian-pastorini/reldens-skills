@@ -19,38 +19,39 @@ CREATE TABLE IF NOT EXISTS `skills_class_path` (
   `label` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `levels_set_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `key` (`key`),
   KEY `levels_set_id` (`levels_set_id`),
   CONSTRAINT `FK_skills_class_path_skills_levels_set` FOREIGN KEY (`levels_set_id`) REFERENCES `skills_levels_set` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_class_path_level_labels
 CREATE TABLE IF NOT EXISTS `skills_class_path_level_labels` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `class_path_id` int(11) unsigned NOT NULL,
-  `level_key` int(11) unsigned NOT NULL,
+  `level_id` int(11) unsigned NOT NULL,
   `label` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `class_path_id_level_key` (`class_path_id`,`level_key`),
+  UNIQUE KEY `class_path_id_level_key` (`class_path_id`,`level_id`) USING BTREE,
   KEY `class_path_id` (`class_path_id`),
-  KEY `level_key` (`level_key`),
+  KEY `level_key` (`level_id`) USING BTREE,
   CONSTRAINT `FK__skills_class_path` FOREIGN KEY (`class_path_id`) REFERENCES `skills_class_path` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `FK_skills_class_path_level_labels_skills_levels` FOREIGN KEY (`level_key`) REFERENCES `skills_levels` (`key`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  CONSTRAINT `FK_skills_class_path_level_labels_skills_levels` FOREIGN KEY (`level_id`) REFERENCES `skills_levels` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_class_path_level_skills
 CREATE TABLE IF NOT EXISTS `skills_class_path_level_skills` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `class_path_id` int(11) unsigned NOT NULL,
-  `level_key` int(11) unsigned NOT NULL,
+  `level_id` int(11) unsigned NOT NULL,
   `skill_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `class_path_id` (`class_path_id`),
-  KEY `level_key` (`level_key`),
   KEY `skill_id` (`skill_id`),
+  KEY `level_key` (`level_id`) USING BTREE,
   CONSTRAINT `FK_skills_class_path_level_skills_skills_class_path` FOREIGN KEY (`class_path_id`) REFERENCES `skills_class_path` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `FK_skills_class_path_level_skills_skills_levels` FOREIGN KEY (`level_key`) REFERENCES `skills_levels` (`key`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_skills_class_path_level_skills_skills_levels` FOREIGN KEY (`level_id`) REFERENCES `skills_levels` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `FK_skills_class_path_level_skills_skills_skill` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_groups
 CREATE TABLE IF NOT EXISTS `skills_groups` (
@@ -70,15 +71,15 @@ CREATE TABLE IF NOT EXISTS `skills_levels` (
   `required_experience` bigint(20) unsigned DEFAULT NULL,
   `level_set_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `key` (`key`),
+  UNIQUE KEY `key_level_set_id` (`key`,`level_set_id`),
   KEY `level_set_id` (`level_set_id`),
   CONSTRAINT `FK_skills_levels_skills_levels_set` FOREIGN KEY (`level_set_id`) REFERENCES `skills_levels_set` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping structure for table skills_levels_modifiers
+-- Dumping structure for table reldens.skills_levels_modifiers
 CREATE TABLE IF NOT EXISTS `skills_levels_modifiers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `level_key` int(11) unsigned NOT NULL,
+  `level_id` int(11) unsigned NOT NULL,
   `key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `property_key` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `operation` int(11) unsigned NOT NULL,
@@ -88,10 +89,10 @@ CREATE TABLE IF NOT EXISTS `skills_levels_modifiers` (
   `minProperty` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `maxProperty` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `level_key` (`level_key`),
   KEY `modifier_id` (`key`) USING BTREE,
-  CONSTRAINT `FK__skills_levels` FOREIGN KEY (`level_key`) REFERENCES `skills_levels` (`key`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
+  KEY `level_key` (`level_id`) USING BTREE,
+  CONSTRAINT `FK_skills_levels_modifiers_skills_levels` FOREIGN KEY (`level_id`) REFERENCES `skills_levels` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
 
 -- Dumping structure for table skills_levels_modifiers_conditions
 CREATE TABLE IF NOT EXISTS `skills_levels_modifiers_conditions` (
@@ -111,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `skills_levels_set` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `autoFillRanges` int(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_owners_class_path
 CREATE TABLE IF NOT EXISTS `skills_owners_class_path` (
@@ -123,7 +124,7 @@ CREATE TABLE IF NOT EXISTS `skills_owners_class_path` (
   PRIMARY KEY (`id`),
   KEY `level_set_id` (`class_path_id`) USING BTREE,
   CONSTRAINT `FK_skills_owners_class_path_skills_class_path` FOREIGN KEY (`class_path_id`) REFERENCES `skills_class_path` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_skill
 CREATE TABLE IF NOT EXISTS `skills_skill` (
@@ -147,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill` (
   `customData` text COLLATE utf8_unicode_ci COMMENT 'Any custom data, recommended JSON format.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_skill_attack
 CREATE TABLE IF NOT EXISTS `skills_skill_attack` (
@@ -168,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill_attack` (
   PRIMARY KEY (`id`),
   KEY `skill_id` (`skill_id`),
   CONSTRAINT `FK__skills_skill_attack` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_skill_group_relation
 CREATE TABLE IF NOT EXISTS `skills_skill_group_relation` (
@@ -193,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill_owner_conditions` (
   PRIMARY KEY (`id`),
   KEY `skill_id` (`skill_id`),
   CONSTRAINT `FK_skills_skill_owner_conditions_skills_skill` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- Dumping structure for table skills_skill_owner_effects
 CREATE TABLE IF NOT EXISTS `skills_skill_owner_effects` (
@@ -210,7 +211,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill_owner_effects` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `skill_id` (`skill_id`) USING BTREE,
   CONSTRAINT `FK_skills_skill_owner_effects_skills_skill` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
 
 -- Dumping structure for table skills_skill_owner_effects_conditions
 CREATE TABLE IF NOT EXISTS `skills_skill_owner_effects_conditions` (
@@ -236,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill_physical_data` (
   PRIMARY KEY (`id`),
   KEY `attack_skill_id` (`skill_id`) USING BTREE,
   CONSTRAINT `FK_skills_skill_physical_data_skills_skill` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping structure for table skills_skill_target_effects
 CREATE TABLE IF NOT EXISTS `skills_skill_target_effects` (
@@ -253,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `skills_skill_target_effects` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `skill_id` (`skill_id`) USING BTREE,
   CONSTRAINT `FK_skills_skill_effect_modifiers` FOREIGN KEY (`skill_id`) REFERENCES `skills_skill` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modifiers table.';
 
 -- Dumping structure for table skills_skill_target_effects_conditions
 CREATE TABLE IF NOT EXISTS `skills_skill_target_effects_conditions` (
