@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `skills_levels` (
   CONSTRAINT `FK_skills_levels_skills_levels_set` FOREIGN KEY (`level_set_id`) REFERENCES `skills_levels_set` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping structure for table reldens.skills_levels_modifiers
+-- Dumping structure for table skills_levels_modifiers
 CREATE TABLE IF NOT EXISTS `skills_levels_modifiers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `level_id` int(11) unsigned NOT NULL,
@@ -111,9 +111,9 @@ CREATE TABLE IF NOT EXISTS `skills_levels_modifiers_conditions` (
 CREATE TABLE IF NOT EXISTS `skills_levels_set` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `autoFillRanges` int(1) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
+  `autoFillExperienceMultiplier` INT(1) unsigned NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) COLLATE='utf8_unicode_ci' ENGINE=InnoDB AUTO_INCREMENT=1;
 -- Dumping structure for table skills_owners_class_path
 CREATE TABLE IF NOT EXISTS `skills_owners_class_path` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
