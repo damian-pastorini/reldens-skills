@@ -5,7 +5,6 @@
  */
 
 module.exports = {
-    SkillsServer: require('./lib/server'),
     SkillsEvents: require('./lib/skills-events'),
     Receiver: require('./lib/client/receiver'),
     ClassPath: require('./lib/class-path'),

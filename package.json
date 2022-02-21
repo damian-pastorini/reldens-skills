@@ -1,7 +1,7 @@
 {
     "name": "@reldens/skills",
     "scope": "@reldens",
-    "version": "0.3.7",
+    "version": "0.11.0",
     "description": "Reldens - Skills",
     "author": "Damian A. Pastorini",
     "license": "MIT",
@@ -14,7 +14,14 @@
     },
     "keywords": [
         "reldens",
-        "skills",
+        "skill",
+        "hability",
+        "attack",
+        "defense",
+        "magic",
+        "class",
+        "level",
+        "path",
         "game",
         "mmorpg",
         "rpg",
@@ -33,8 +40,8 @@
         "url": "https://github.com/damian-pastorini/reldens-skills/issues"
     },
     "dependencies": {
-        "@reldens/modifiers": "^0.4.7",
-        "@reldens/storage": "^0.4.1",
-        "@reldens/utils": "^0.4.3"
+        "@reldens/modifiers": "^0.11.0",
+        "@reldens/storage": "^0.11.0",
+        "@reldens/utils": "^0.11.0"
     }
 }
