@@ -2,35 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## File Access Permissions
-
-**IMPORTANT: These permissions must be approved by the user at the beginning of each session.**
-
-Once approved, you are granted the following permissions for files under `D:\dap\work\reldens\npm-packages\reldens-skills`:
-
-✅ **ALLOWED**:
-- Read ANY file under `D:\dap\work\reldens\npm-packages\reldens-skills`
-- Create NEW files under `D:\dap\work\reldens\npm-packages\reldens-skills`
-
-❌ **FORBIDDEN**:
-- Edit or modify EXISTING files
-- Delete files
-- Move files
-
-**When modifications to existing files are needed:**
-- Provide complete NEW file artifacts with the full updated content
-- User will manually replace the existing files with the new content
-- Never use the Edit tool on existing files
-
-## Code Rules & Standards
-
-1. Read and follow ALL coding rules from `D:\dap\work\reldens\_source\ai-coding-rules.md`.
-2. Apply the code rules to every single line of code you provide.
-3. Self-audit every response against the rules before sending.
-
 ## Package Overview
 
-**@reldens/skills** (v0.45.0) is a comprehensive skills, leveling, and combat system that provides:
+**@reldens/skills** (v0.47.0) is a comprehensive skills, leveling, and combat system that provides:
 - Level sets with automatic progression and experience management
 - Class paths with skill trees and level-dependent unlocks
 - Multiple skill types (base, attack, effect, physical variants)
@@ -41,11 +15,32 @@ Once approved, you are granted the following permissions for files under `D:\dap
 
 This package is part of the Reldens MMORPG Platform ecosystem and can be attached to any entity owner with position methods.
 
+## Comprehensive Documentation
+
+**Detailed technical documentation is available in the `.claude/` directory:**
+
+- **[Event System Architecture](.claude/event-system-architecture.md)** - Complete event system documentation including EventsManagerSingleton, removeKey registry, event naming, and testing anti-patterns
+- **[Skill Execution Flow](.claude/skill-execution-flow.md)** - Step-by-step skill execution phases, type-specific logic, and complete sequence diagrams
+- **[Testing Patterns](.claude/testing-patterns.md)** - Best practices, anti-patterns, and critical lessons learned from test suite debugging
+- **[Level Progression](.claude/level-progression.md)** - Complete leveling system guide including auto-fill, experience management, and class paths
+- **[Class Hierarchy](.claude/class-hierarchy.md)** - Architecture reference with inheritance, composition, and integration patterns
+
+**Always consult these documents when working with the corresponding systems.**
+
 ## Key Commands
 
 ```bash
-# Run tests
+# Run all tests
 npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run specific tests with filter
+npm run test:filter=skill
+
+# Run tests with coverage
+npm run test:coverage
 ```
 
 ## Architecture
@@ -251,6 +246,13 @@ lib/
 
 All events are prefixed with `reldens.skills.` and appended with owner event key.
 
+**IMPORTANT:** See `.claude/event-system-architecture.md` for complete event system documentation including:
+- EventsManagerSingleton architecture and removeKey registry
+- Event naming conventions (owner-namespaced)
+- Listener registration patterns
+- Testing anti-patterns and race conditions
+- Critical rules for event usage
+
 **Level Set Events** (fired by LevelsSet):
 - `INIT_LEVEL_SET_START`: Before level set initialization
 - `INIT_LEVEL_SET_END`: After level set initialization
@@ -336,8 +338,140 @@ All action constants use `rski.` prefix (Reldens Skills) for network messages:
 
 ## Dependencies
 
-- **@reldens/modifiers** (^0.32.0): Provides PropertyManager, Condition, Calculator, and modifier system
+- **@reldens/modifiers** (^0.33.0): Provides PropertyManager, Condition, Calculator, and modifier system
 - **@reldens/utils** (^0.54.0): Provides Shortcuts (sc), Logger, EventsManagerSingleton, InteractionArea
+
+## Test Suite
+
+The package includes a comprehensive test suite using Node.js built-in test runner.
+
+**See `.claude/testing-patterns.md` for comprehensive testing best practices, anti-patterns, and lessons learned.**
+
+### Test Structure
+
+```
+tests/
+├── run-tests.js                    # Test runner with filtering and coverage support
+├── utils/
+│   └── test-helpers.js            # Helper functions for tests
+├── fixtures/
+│   ├── mocks/                     # Mock classes (MockOwner, MockTarget, MockClient)
+│   ├── skills/                    # Skill test data fixtures
+│   └── levels/                    # Level test data fixtures
+└── unit/
+    ├── test-skill.js              # Skill class tests
+    ├── test-level.js              # Level class tests
+    ├── test-levels-set.js         # LevelsSet class tests
+    ├── test-class-path.js         # ClassPath class tests
+    ├── test-server.js             # SkillsServer tests
+    ├── types/
+    │   ├── test-attack.js         # Attack skill type tests
+    │   ├── test-effect.js         # Effect skill type tests
+    │   ├── test-physical-attack.js # PhysicalAttack tests
+    │   └── test-physical-effect.js # PhysicalEffect tests
+    ├── server/
+    │   └── test-sender.js         # Sender tests
+    └── client/
+        └── test-receiver.js       # Receiver tests
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode for development
+npm run test:watch
+
+# Filter specific tests
+npm run test:filter=attack     # Run only attack-related tests
+npm run test:filter=skill      # Run only skill tests
+
+# Coverage report
+npm run test:coverage
+```
+
+### Test Patterns
+
+- **Unit Tests**: Test individual classes and methods in isolation
+- **Mock Objects**: Use MockOwner, MockTarget, and MockClient for testing
+- **Fixtures**: Reusable test data in fixtures directory
+- **Event Testing**: Verify event firing and listening
+- **Async Testing**: Proper handling of async/await patterns
+- **Edge Cases**: Test boundary conditions and error states
+
+### Critical Testing Rules
+
+#### Rule #1: NEVER Test Through Events Unless Testing the Event System
+
+**❌ WRONG:**
+```javascript
+it('should send level up message', async () => {
+    await classPath.levelUp();  // Fires event asynchronously
+    assert.strictEqual(mockClient.sentMessages.length, 1);  // Race condition!
+});
+```
+
+**✅ CORRECT:**
+```javascript
+it('should send level up message', async () => {
+    await sender.sendLevelUpData(classPath);  // Direct method call
+    assert.strictEqual(mockClient.sentMessages.length, 1);  // Deterministic
+});
+```
+
+#### Rule #2: NEVER Use sleep() to Fix Race Conditions
+
+**❌ WRONG:**
+```javascript
+await classPath.levelUp();
+await TestHelpers.sleep(10);  // DON'T DO THIS!
+assert.strictEqual(mockClient.sentMessages.length, 1);
+```
+
+**✅ CORRECT (for testing methods):**
+```javascript
+await sender.sendLevelUpData(classPath);  // Direct method call
+assert.strictEqual(mockClient.sentMessages.length, 1);
+```
+
+**✅ CORRECT (for testing timers):**
+```javascript
+it('should restore canActivate after delay', async () => {
+    skill.validate();
+    await TestHelpers.sleep(150);  // Testing actual timer feature
+    assert.strictEqual(skill.canActivate, true);
+});
+```
+
+#### Rule #3: ALWAYS Use Unique removeKeys
+
+**❌ WRONG:**
+```javascript
+// Test 1
+classPath.listenEvent(SkillsEvents.ADD_SKILLS_BEFORE, callback, 'before-listener');
+
+// Test 2 (after clearEventListeners)
+classPath.listenEvent(SkillsEvents.REMOVE_SKILLS_BEFORE, callback, 'before-listener');
+// ❌ removeKey collision - registration fails silently
+```
+
+**✅ CORRECT:**
+```javascript
+// Test 1
+classPath.listenEvent(SkillsEvents.ADD_SKILLS_BEFORE, callback, 'add-before-listener');
+
+// Test 2
+classPath.listenEvent(SkillsEvents.REMOVE_SKILLS_BEFORE, callback, 'remove-before-listener');
+// ✓ Unique removeKeys
+```
+
+**Summary:**
+- ❌ Don't test through events (use direct method calls)
+- ❌ Don't use `sleep()` to fix race conditions
+- ✅ Do use `sleep()` to test timer features (skillDelay, castTime)
+- ✅ Always use unique removeKeys across all tests
 
 ## Common Development Patterns
 
@@ -486,3 +620,4 @@ When working on code issues:
 - Verify file contents before creating patches
 - Never jump to early conclusions
 - A variable with an unexpected value is not an issue, it is the result of a previous issue
+- Consult `.claude/` documentation for detailed technical information on each system
