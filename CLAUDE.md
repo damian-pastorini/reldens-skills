@@ -1,7 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Package Overview
 
 **@reldens/skills** (v0.47.0) is a comprehensive skills, leveling, and combat system that provides:
