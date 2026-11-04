@@ -301,15 +301,16 @@ describe('LevelsSet', () => {
             assert.strictEqual(eventFired, true);
         });
 
-        it('should fire SET_LEVELS without any keys', async () => {
+        it('should not register a SET_LEVELS listener without a remove key', async () => {
             let eventFired = false;
             let levels = BaseLevelsFixtures.createLevelSet();
             let levelsSet = new LevelsSet({owner: mockOwner});
-            levelsSet.listenEvent(SkillsEvents.SET_LEVELS, () => {
+            let listenerResult = levelsSet.listenEvent(SkillsEvents.SET_LEVELS, () => {
                 eventFired = true;
             });
             await levelsSet.init({levels: levels, currentLevel: 1, currentExp: 0});
-            assert.strictEqual(eventFired, true);
+            assert.strictEqual(listenerResult, false);
+            assert.strictEqual(eventFired, false);
         });
 
         it('should fire LEVEL_DOWN event', async () => {

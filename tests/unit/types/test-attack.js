@@ -607,7 +607,7 @@ describe('Attack', () => {
             assert.strictEqual(eventFired, true);
         });
 
-        it('should fire event without any keys', async () => {
+        it('should not register a listener without a remove key', async () => {
             let eventFired = false;
             let attackData = {
                 ...BaseSkillsFixtures.attackSkill,
@@ -615,11 +615,12 @@ describe('Attack', () => {
                 range: 0
             };
             let attack = new Attack(attackData);
-            attack.listenEvent(SkillsEvents.SKILL_ATTACK_APPLY_DAMAGE, () => {
+            let listenerResult = attack.listenEvent(SkillsEvents.SKILL_ATTACK_APPLY_DAMAGE, () => {
                 eventFired = true;
             });
             await attack.applyDamageTo(mockTarget);
-            assert.strictEqual(eventFired, true);
+            assert.strictEqual(listenerResult, false);
+            assert.strictEqual(eventFired, false);
         });
     });
 
