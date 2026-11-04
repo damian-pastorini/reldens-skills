@@ -353,15 +353,16 @@ describe('Skill', () => {
             assert.strictEqual(eventFired, true);
         });
 
-        it('should fire event without any keys', async () => {
+        it('should not register a listener without a remove key', async () => {
             let eventFired = false;
             let skillData = {...BaseSkillsFixtures.basicSkill, owner: mockOwner};
             let skill = new Skill(skillData);
-            skill.listenEvent(SkillsEvents.SKILL_BEFORE_EXECUTE, () => {
+            let listenerResult = skill.listenEvent(SkillsEvents.SKILL_BEFORE_EXECUTE, () => {
                 eventFired = true;
             });
             await skill.execute(mockTarget);
-            assert.strictEqual(eventFired, true);
+            assert.strictEqual(listenerResult, false);
+            assert.strictEqual(eventFired, false);
         });
 
         it('should handle multiple listeners on same event', async () => {

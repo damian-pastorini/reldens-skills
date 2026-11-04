@@ -371,7 +371,7 @@ describe('Effect', () => {
             assert.strictEqual(eventFired, true);
         });
 
-        it('should fire event without any keys', async () => {
+        it('should not register a listener without a remove key', async () => {
             let eventFired = false;
             let effectData = {
                 ...BaseSkillsFixtures.effectSkill,
@@ -381,11 +381,12 @@ describe('Effect', () => {
             };
             let effect = new Effect(effectData);
             effect.target = mockTarget;
-            effect.listenEvent(SkillsEvents.SKILL_EFFECT_TARGET_MODIFIERS, () => {
+            let listenerResult = effect.listenEvent(SkillsEvents.SKILL_EFFECT_TARGET_MODIFIERS, () => {
                 eventFired = true;
             });
             await effect.runSkillLogic();
-            assert.strictEqual(eventFired, true);
+            assert.strictEqual(listenerResult, false);
+            assert.strictEqual(eventFired, false);
         });
 
         it('should handle multiple listeners', async () => {

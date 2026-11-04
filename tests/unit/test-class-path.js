@@ -569,11 +569,11 @@ describe('ClassPath', () => {
             assert.strictEqual(eventFired, true);
         });
 
-        it('should fire event without any keys', async () => {
+        it('should not register a listener without a remove key', async () => {
             let eventFired = false;
             let levels = BaseLevelsFixtures.createLevelSet();
             let classPath = new ClassPath({owner: mockOwner});
-            classPath.listenEvent(SkillsEvents.INIT_CLASS_PATH_END, () => {
+            let listenerResult = classPath.listenEvent(SkillsEvents.INIT_CLASS_PATH_END, () => {
                 eventFired = true;
             });
             await classPath.init({
@@ -582,7 +582,8 @@ describe('ClassPath', () => {
                 currentLevel: 1,
                 currentExp: 0
             });
-            assert.strictEqual(eventFired, true);
+            assert.strictEqual(listenerResult, false);
+            assert.strictEqual(eventFired, false);
         });
 
         it('should handle multiple listeners', async () => {
