@@ -1,7 +1,7 @@
 {
     "name": "@reldens/skills",
     "scope": "@reldens",
-    "version": "0.58.0",
+    "version": "0.59.0",
     "description": "Reldens - Skills",
     "author": "Damian A. Pastorini",
     "license": "MIT",
@@ -47,6 +47,6 @@
     },
     "dependencies": {
         "@reldens/modifiers": "^0.43.0",
-        "@reldens/utils": "^0.63.0"
+        "@reldens/utils": "^0.66.0"
     }
 }

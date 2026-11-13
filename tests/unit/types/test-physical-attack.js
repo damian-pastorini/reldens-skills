@@ -76,6 +76,13 @@ describe('PhysicalAttack', () => {
             assert.strictEqual(skill.isReady, false);
         });
 
+        it('should keep isReady false when the attack affectedProperty is missing', async () => {
+            let skillData = {...BaseSkillsFixtures.physicalAttackSkill, owner: mockOwner};
+            delete skillData.affectedProperty;
+            let skill = new PhysicalAttack(skillData);
+            assert.deepStrictEqual([skill.isReady, await skill.execute(mockTarget)], [false, false]);
+        });
+
         it('should set magnitude property', () => {
             let skillData = {...BaseSkillsFixtures.physicalAttackSkill, owner: mockOwner};
             let skill = new PhysicalAttack(skillData);
