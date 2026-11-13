@@ -119,6 +119,17 @@ describe('PhysicalEffect', () => {
             assert.strictEqual(skill.isReady, false);
         });
 
+        it('should keep isReady false when the effect targetEffects are missing', async () => {
+            let skill = new PhysicalEffect({
+                key: 'test-physical-effect',
+                owner: mockOwner,
+                magnitude: 100,
+                objectWidth: 10,
+                objectHeight: 10
+            });
+            assert.deepStrictEqual([skill.isReady, await skill.execute(mockTarget)], [false, false]);
+        });
+
         it('should set magnitude property', () => {
             let skillData = {
                 key: 'test-physical-effect',
