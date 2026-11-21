@@ -358,7 +358,7 @@ describe('PhysicalEffect', () => {
             assert.strictEqual(result, false);
         });
 
-        it('should skip validation when validateTargetOnHit is false', async () => {
+        it('should apply the effect to the hit body and not the selected target when validateTargetOnHit is false', async () => {
             let differentTarget = new MockTarget();
             differentTarget.id = 'different-id';
             let modifier = new Modifier({
@@ -378,9 +378,13 @@ describe('PhysicalEffect', () => {
                 validateTargetOnHit: false
             };
             let skill = new PhysicalEffect(skillData);
-            let initialDef = mockTarget.stats.def;
+            let selectedTargetDef = mockTarget.stats.def;
+            let hitTargetDef = differentTarget.stats.def;
             await skill.executeOnHit(differentTarget);
-            assert.strictEqual(mockTarget.stats.def, initialDef + 15);
+            assert.deepStrictEqual(
+                [mockTarget.stats.def, differentTarget.stats.def],
+                [selectedTargetDef, hitTargetDef + 15]
+            );
         });
 
         it('should call parent runSkillLogic', async () => {
