@@ -230,7 +230,7 @@ describe('PhysicalAttack', () => {
             assert.strictEqual(result, false);
         });
 
-        it('should skip validation when validateTargetOnHit is false', async () => {
+        it('should damage the hit body and not the selected target when validateTargetOnHit is false', async () => {
             let differentTarget = new MockTarget();
             differentTarget.id = 'different-id';
             let skillData = {
@@ -241,9 +241,13 @@ describe('PhysicalAttack', () => {
                 applyDirectDamage: true
             };
             let skill = new PhysicalAttack(skillData);
-            let initialHp = mockTarget.stats.hp;
+            let selectedTargetHp = mockTarget.stats.hp;
+            let hitTargetHp = differentTarget.stats.hp;
             await skill.executeOnHit(differentTarget);
-            assert.ok(mockTarget.stats.hp < initialHp);
+            assert.deepStrictEqual(
+                [mockTarget.stats.hp, differentTarget.stats.hp < hitTargetHp],
+                [selectedTargetHp, true]
+            );
         });
 
         it('should call parent runSkillLogic', async () => {
